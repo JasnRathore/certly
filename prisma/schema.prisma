@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Organization {
+  id               String          @id @default(uuid())
+  name             String
+  gmailAddress     String?
+  gmailAppPassword String?
+  memberships      OrgMembership[]
+  events           Event[]
+  createdAt        DateTime        @default(now())
+}
+
+model User {
+  id           String          @id @default(uuid())
+  name         String
+  email        String          @unique
+  passwordHash String
+  memberships  OrgMembership[]
+  createdAt    DateTime        @default(now())
+}
+
+model OrgMembership {
+  id           String       @id @default(uuid())
+  role         String       @default("MEMBER") // ADMIN, MEMBER
+  userId       String
+  orgId        String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  createdAt    DateTime     @default(now())
+
+  @@unique([userId, orgId])
+}
+
+model Event {
+  id             String       @id @default(uuid())
+  name           String
+  description    String
+  status         String       @default("draft") // draft, configured, generated, sent
+  emailSubject   String       @default("Your Certificate - {event}")
+  emailBody      String       @default("Dear {name},\n\nPlease find your certificate for {event} attached to this email.\n\nBest regards")
+  textConfig     String       // JSON stringified TextConfig
+  hasTemplate    Boolean      @default(false)
+  templateWidth  Float?
+  templateHeight Float?
+  orgId          String
+  organization   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  recipients     Recipient[]
+  createdAt      DateTime     @default(now())
+}
+
+model Recipient {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  status    String   @default("pending") // pending, generated, sent, failed
+  error     String?
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
