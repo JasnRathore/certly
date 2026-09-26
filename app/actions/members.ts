@@ -84,9 +84,9 @@ async function deliverInvite(input: {
   const origin = await getAppOrigin();
   const url = inviteUrl(origin, input.token);
   const expires = new Date(input.expiresAt).toUTCString();
-  const subject = `${oneLine(input.inviterName)} invited you to ${oneLine(input.orgName)} on CertGen`;
+  const subject = `${oneLine(input.inviterName)} invited you to ${oneLine(input.orgName)} on Certly`;
   const text = [
-    `${input.inviterName} invited you to join ${input.orgName} on CertGen as ${roleLabel(input.role)}.`,
+    `${input.inviterName} invited you to join ${input.orgName} on Certly as ${roleLabel(input.role)}.`,
     "",
     "Accept the invitation:",
     url,

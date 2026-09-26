@@ -6,7 +6,7 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CertGen - Certificate Generator",
+  title: "Certly - Certificate Generator",
   description: "Generate and email certificates easily",
 };
 

@@ -67,15 +67,15 @@ export default function MainStagePage() {
         <WorkspacePreview />
       </section>
 
-      <section id="features" className="relative z-10 mx-auto max-w-6xl px-6 py-32 text-center">
+      <section id="features" className="relative z-10 mx-auto max-w-5xl px-6 py-32 text-center">
         <p className="text-sm text-[#8b7cf6]">Made for college and school clubs</p>
         <h2 className="mx-auto mt-5 max-w-3xl text-3xl font-medium tracking-[-0.04em] text-[#e8e8eb] sm:text-5xl">The fastest way to finish the certificate backlog.</h2>
         <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-[#8f8f98]">
           No mail merge, no late-night PDF exports, and no per-certificate charge. Certly handles the repetitive work so your team can run the event.
         </p>
-        <div className="mx-auto mt-16 grid w-full max-w-6xl gap-6 text-left md:grid-cols-2">
+        <div className="mx-auto mt-16 grid w-full max-w-3xl gap-6 text-left md:grid-cols-2">
           <div className="w-full"><FeatureCard eyebrow="Upload once" title="Use the design you already made" description="Drop in your club&apos;s certificate artwork and place the name, event, and date fields without learning a design tool." imageSrc="/design2.png" /></div>
-          <div className="w-full"><FeatureCard eyebrow="Import a list" title="Bring names and emails together" description="Upload a spreadsheet, match the columns, and check your recipients before anything is sent." imageSrc="/recipients.png" /></div>
+          <div className="w-full"><FeatureCard eyebrow="Import a list" title="Bring names and emails together" description="Upload a spreadsheet, match the columns, and check your recipients before anything is sent." imageSrc="/recipients2.png" /></div>
           <div className="w-full md:col-span-2 md:mx-auto md:w-1/2"><FeatureCard eyebrow="Send in one pass" title="PDFs in every inbox" description="Generate personalised PDFs and send them from your organisation&apos;s Gmail with clear sent and queued status." imageSrc="/overview.png" /></div>
         </div>
       </section>
@@ -110,7 +110,7 @@ export default function MainStagePage() {
       <section className="relative z-10 border-y border-white/[0.08] bg-[#0d0d0f] px-6 py-32 text-center">
         <p className="text-sm font-medium text-[#8b7cf6]">03 · Send without the all-nighter</p>
         <h2 className="mx-auto mt-5 max-w-3xl text-4xl font-medium tracking-[-0.05em] text-[#ededf0] sm:text-6xl">Certificates delivered while the event is still fresh.</h2>
-        <div className="mx-auto mt-14 grid w-full max-w-6xl gap-6 text-left md:grid-cols-2">
+        <div className="mx-auto mt-14 grid w-full max-w-3xl gap-6 text-left md:grid-cols-2">
           <div className="w-full"><FeatureCard eyebrow="Live status" title="Know what went out" description="See every recipient move from queued to sent instead of watching one mystery spinner." imageSrc="/recipients.png" /></div>
           <div className="w-full"><FeatureCard eyebrow="Club Gmail" title="Send from an address people trust" description="Connect the organisation&apos;s Gmail so certificates arrive from the account participants recognise." imageSrc="/design.png" /></div>
           <div className="w-full md:col-span-2 md:mx-auto md:w-1/2"><FeatureCard eyebrow="No per-certificate fee" title="Free for every club" description="Run a 20-person workshop or a 2,000-person fest without watching a usage meter." imageSrc="/overview.png" badgeVariant="warning" /></div>

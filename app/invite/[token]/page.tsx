@@ -15,7 +15,7 @@ function Logo() {
           <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
         </svg>
       </div>
-      <h1 className="text-2xl font-bold tracking-tight text-white">CertGen</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-white">Certly</h1>
     </div>
   );
 }
@@ -163,7 +163,7 @@ export default async function InvitePage({
         {viewer && (
           <p className="mt-6 text-center text-sm text-[#888]">
             <Link href="/dashboard" className="text-white hover:underline">
-              Back to CertGen
+              Back to Certly
             </Link>
           </p>
         )}

@@ -29,8 +29,8 @@ export default async function LoginPage({
               <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">CertGen</h1>
-          <p className="text-sm text-vercel-300 mt-1.5">Log in to CertGen</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Certly</h1>
+          <p className="text-sm text-vercel-300 mt-1.5">Log in to Certly</p>
         </div>
 
         {/* Google OAuth */}
