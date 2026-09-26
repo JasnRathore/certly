@@ -3,19 +3,12 @@ import Link from "next/link";
 import Image from "next/image"
 import { CertlyHeader } from "@/components/certly-header";
 import { TiltCard, type TiltCardProps } from "@/components/unlumen-ui/tilt-card";
-import { Safari } from "@/components/ui/safari";
+import { WorkspacePreview } from "@/components/workspace-preview";
+
 export const metadata: Metadata = {
   title: "Certly Certificates, generated and sent",
   description: "Upload a template, add your recipients, and email every certificate from one place.",
 };
-
-function WorkspacePreview() {
-  return (
-    <div className="mx-auto mt-16 w-full max-w-[1120px] text-left shadow-[0_35px_120px_rgba(0,0,0,0.7)]">
-      <Safari url="certly.app/dashboard" imageSrc="/design.png" />
-    </div>
-  );
-}
 
 function FeatureCard({
   eyebrow,
