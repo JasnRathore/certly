@@ -1,7 +1,20 @@
 import { register, googleSignIn } from "@/app/actions/auth";
+import { safeNextPath } from "@/lib/safe-path";
 import Link from "next/link";
 
-export default function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ email?: string; next?: string }>;
+}) {
+  const params = await searchParams;
+  const email = typeof params.email === "string" ? params.email : "";
+  const nextPath = safeNextPath(params.next);
+  const loginHref =
+    nextPath === "/dashboard" && !email
+      ? "/login"
+      : `/login?email=${encodeURIComponent(email)}&next=${encodeURIComponent(nextPath)}`;
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-black px-4">
       <div className="w-full max-w-[350px]">
@@ -22,6 +35,7 @@ export default function RegisterPage() {
 
         {/* Google OAuth */}
         <form action={googleSignIn}>
+          <input type="hidden" name="next" value={nextPath} />
           <button
             type="submit"
             className="w-full bg-black border border-vercel-700 text-white font-medium rounded-md h-10 hover:bg-vercel-900 transition flex items-center justify-center text-sm cursor-pointer gap-2"
@@ -45,6 +59,7 @@ export default function RegisterPage() {
 
         {/* Form */}
         <form action={register as any} className="space-y-4">
+          <input type="hidden" name="next" value={nextPath} />
           <div>
             <label className="text-vercel-300 text-sm mb-1.5 block" htmlFor="name">
               Name
@@ -71,6 +86,7 @@ export default function RegisterPage() {
               required
               autoComplete="email"
               placeholder="name@example.com"
+              defaultValue={email}
               className="bg-black border border-vercel-700 rounded-md h-10 px-3 text-white text-sm focus:border-vercel-400 focus:outline-none w-full placeholder:text-vercel-500 transition-colors"
             />
           </div>
@@ -102,7 +118,7 @@ export default function RegisterPage() {
         {/* Bottom link */}
         <p className="text-center text-sm text-[#888] mt-8">
           Already have an account?{" "}
-          <Link href="/login" className="text-white hover:underline transition-colors">
+          <Link href={loginHref} className="text-white hover:underline transition-colors">
             Log in
           </Link>
         </p>

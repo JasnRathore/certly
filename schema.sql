@@ -58,3 +58,24 @@ CREATE TABLE IF NOT EXISTS OTP (
   code TEXT NOT NULL,
   expiresAt DATETIME NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS OrgInvite (
+  id TEXT PRIMARY KEY,
+  orgId TEXT NOT NULL,
+  email TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'MEMBER',
+  token TEXT NOT NULL UNIQUE,
+  invitedBy TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'PENDING',
+  expiresAt DATETIME NOT NULL,
+  acceptedAt DATETIME,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (orgId) REFERENCES Organization(id) ON DELETE CASCADE,
+  FOREIGN KEY (invitedBy) REFERENCES User(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_org_invite_email_status ON OrgInvite (email, status);
+CREATE INDEX IF NOT EXISTS idx_org_invite_org_status ON OrgInvite (orgId, status);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_org_invite_one_pending
+  ON OrgInvite (orgId, email)
+  WHERE status = 'PENDING';

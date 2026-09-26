@@ -1,5 +1,6 @@
 import { getActiveOrg } from "@/lib/auth-utils";
 import { updateOrgSettings } from "@/app/actions/org";
+import { SettingsTabs } from "@/components/SettingsTabs";
 
 export default async function SettingsPage() {
   const { organization, role } = await getActiveOrg();
@@ -12,6 +13,8 @@ export default async function SettingsPage() {
         <h1 className="text-sm font-medium text-white">Settings</h1>
         <p className="text-sm text-[#888] mt-1">Manage your organization settings</p>
       </div>
+
+      <SettingsTabs />
 
       {/* Section Card */}
       <div className="border border-[#222] rounded-lg overflow-hidden bg-black">

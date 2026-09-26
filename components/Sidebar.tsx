@@ -8,6 +8,8 @@ import {
   Settings,
   Calendar,
   LogOut,
+  Mail,
+  Users,
   ChevronDown,
   Check,
   MoreHorizontal,
@@ -35,6 +37,7 @@ interface SidebarProps {
   }>;
   userName: string;
   userEmail: string;
+  incomingInviteCount?: number;
 }
 
 export function Sidebar({
@@ -43,6 +46,7 @@ export function Sidebar({
   memberships = [],
   userName,
   userEmail,
+  incomingInviteCount = 0,
 }: SidebarProps) {
   const pathname = usePathname();
   const [isOrgSwitcherOpen, setIsOrgSwitcherOpen] = useState(false);
@@ -150,8 +154,10 @@ export function Sidebar({
     return 'US';
   };
 
-  const isEventsActive = pathname === '/' || pathname === '/events';
-  const isSettingsActive = pathname.startsWith('/settings');
+  const isEventsActive = pathname === '/dashboard' || pathname.startsWith('/events');
+  const isMembersActive = pathname.startsWith('/settings/members');
+  const isInvitesActive = pathname === '/invites' || pathname.startsWith('/invites/');
+  const isSettingsActive = pathname === '/settings';
 
   return (
     <aside className="w-64 bg-black text-white flex flex-col h-screen border-r border-[#222] select-none text-sm shrink-0">
@@ -166,9 +172,6 @@ export function Sidebar({
             <span className="w-2 h-2 rounded-full bg-green-500 shrink-0 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
             <span className="text-xs font-semibold text-white truncate tracking-tight">
               {currentOrg.name}
-            </span>
-            <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#161616] text-[#888] border border-[#2a2a2a] leading-none shrink-0 font-medium">
-              Pro
             </span>
           </div>
           <ChevronDown
@@ -277,7 +280,7 @@ export function Sidebar({
         {/* Core Nav Items */}
         <div className="space-y-1">
           <Link
-            href="/"
+            href="/dashboard"
             className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
               isEventsActive
                 ? 'bg-[#111] text-white'
@@ -286,6 +289,33 @@ export function Sidebar({
           >
             <Calendar className="w-4 h-4 shrink-0" />
             <span>Events</span>
+          </Link>
+          <Link
+            href="/settings/members"
+            className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              isMembersActive
+                ? 'bg-[#111] text-white'
+                : 'text-[#888] hover:text-white hover:bg-[#111]'
+            }`}
+          >
+            <Users className="w-4 h-4 shrink-0" />
+            <span>Members</span>
+          </Link>
+          <Link
+            href="/invites"
+            className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              isInvitesActive
+                ? 'bg-[#111] text-white'
+                : 'text-[#888] hover:text-white hover:bg-[#111]'
+            }`}
+          >
+            <Mail className="w-4 h-4 shrink-0" />
+            <span>Invitations</span>
+            {incomingInviteCount > 0 && (
+              <span className="ml-auto min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] font-mono flex items-center justify-center">
+                {incomingInviteCount > 9 ? '9+' : incomingInviteCount}
+              </span>
+            )}
           </Link>
           <Link
             href="/settings"

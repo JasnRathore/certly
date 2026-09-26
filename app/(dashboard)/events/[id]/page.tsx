@@ -27,7 +27,7 @@ export default function EventDetail({ params }: { params: Promise<{ id: string }
     fetch(`/api/events/${id}`)
       .then(res => res.json())
       .then(data => {
-        if (data.error) router.push('/');
+        if (data.error) router.push('/dashboard');
         else setEvent(data);
       })
       .finally(() => setLoading(false));

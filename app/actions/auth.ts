@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 import nodemailer from "nodemailer";
+import { safeNextPath } from "@/lib/safe-path";
 
 export async function register(formData: FormData) {
   const name = formData.get("name") as string;
@@ -50,7 +51,8 @@ export async function register(formData: FormData) {
     text: `Your code is: ${code}`
   });
 
-  redirect(`/verify?email=${encodeURIComponent(email)}`);
+  const next = safeNextPath(formData.get("next"));
+  redirect(`/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`);
 }
 
 export async function verifyOtp(email: string, code: string) {
@@ -68,14 +70,15 @@ export async function login(formData: FormData) {
   try {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const next = safeNextPath(formData.get("next"));
     
     // Check if OTP exists for this email, if so they need to verify
     const otpRes = await db.execute({ sql: "SELECT id FROM OTP WHERE email = ?", args: [email] });
     if (otpRes.rows.length > 0) {
-      redirect(`/verify?email=${encodeURIComponent(email)}`);
+      redirect(`/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`);
     }
 
-    await signIn("credentials", { email, password, redirectTo: '/' });
+    await signIn("credentials", { email, password, redirectTo: next });
   } catch (error) {
     if (error instanceof AuthError) {
       return { error: "Invalid credentials" };
@@ -112,6 +115,7 @@ export async function createOrg(name: string) {
   return { orgId };
 }
 
-export async function googleSignIn() {
-  await signIn("google", { redirectTo: '/' });
+export async function googleSignIn(formData?: FormData) {
+  const next = safeNextPath(formData?.get("next"));
+  await signIn("google", { redirectTo: next });
 }

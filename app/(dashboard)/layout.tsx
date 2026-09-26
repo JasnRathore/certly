@@ -1,6 +1,8 @@
+import { InviteBanner } from "@/components/InviteBanner";
 import { Sidebar } from "@/components/Sidebar";
 import { getActiveOrg } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
+import { listIncomingInvites } from "@/lib/org-members";
 
 export default async function DashboardLayout({
   children,
@@ -8,6 +10,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { user, organization, allMemberships } = await getActiveOrg();
+  const incomingInvites = await listIncomingInvites(user.email || "");
 
   const eventsRes = await db.execute({
     sql: `SELECT * FROM Event WHERE orgId = ? ORDER BY createdAt DESC`,
@@ -29,9 +32,11 @@ export default async function DashboardLayout({
         memberships={allMemberships} 
         userName={user.name!}
         userEmail={user.email!}
+        incomingInviteCount={incomingInvites.length}
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-auto bg-black p-6 md:p-10">
+          <InviteBanner count={incomingInvites.length} />
           {children}
         </main>
       </div>

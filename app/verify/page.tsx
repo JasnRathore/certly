@@ -9,12 +9,14 @@ function VerifyForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
+  const next = searchParams.get('next') || '/dashboard';
+  const loginNext = next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await verifyOtp(email, code);
     if (res?.error) setError(res.error);
-    else router.push('/login');
+    else router.push(`/login?email=${encodeURIComponent(email)}&next=${encodeURIComponent(loginNext)}`);
   };
 
   return (

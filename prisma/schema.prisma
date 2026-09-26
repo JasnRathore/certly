@@ -13,6 +13,7 @@ model Organization {
   gmailAddress     String?
   gmailAppPassword String?
   memberships      OrgMembership[]
+  invites          OrgInvite[]
   events           Event[]
   createdAt        DateTime        @default(now())
 }
@@ -23,6 +24,7 @@ model User {
   email        String          @unique
   passwordHash String
   memberships  OrgMembership[]
+  invitesSent  OrgInvite[]     @relation("InvitesSent")
   createdAt    DateTime        @default(now())
 }
 
@@ -36,6 +38,24 @@ model OrgMembership {
   createdAt    DateTime     @default(now())
 
   @@unique([userId, orgId])
+}
+
+model OrgInvite {
+  id           String       @id @default(uuid())
+  orgId        String
+  email        String
+  role         String       @default("MEMBER") // ADMIN, MEMBER
+  token        String       @unique
+  invitedBy    String
+  status       String       @default("PENDING") // PENDING, ACCEPTED, REVOKED, EXPIRED, DECLINED
+  expiresAt    DateTime
+  acceptedAt   DateTime?
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  inviter      User         @relation("InvitesSent", fields: [invitedBy], references: [id], onDelete: Cascade)
+  createdAt    DateTime     @default(now())
+
+  @@index([email, status])
+  @@index([orgId, status])
 }
 
 model Event {
