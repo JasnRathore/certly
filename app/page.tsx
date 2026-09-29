@@ -10,6 +10,7 @@ import { MotionAccordion } from "@/components/motion-accordion";
 import { Testimonials } from "@/components/testimonials";
 import { Mascot2 } from "@/components/mascot";
 import { CertlyLogo } from "@/components/certly-logo";
+import { MutedLinePattern } from "@/components/muted-line-pattern";
 import { auth } from "@/auth";
 import { ChevronRight, Mail, ShieldCheck, UsersRound } from 'lucide-react';
 export const metadata: Metadata = {
@@ -79,8 +80,8 @@ export default async function MainStagePage() {
         <WorkspacePreview />
       </section>
 
-      <section id="features" className="relative z-10 mx-auto max-w-6xl px-6 py-32 text-center">
-        <ScrollReveal>
+      <section id="features" className="relative z-10 overflow-hidden px-6 py-32 text-center">
+        <ScrollReveal className="relative mx-auto max-w-6xl">
           <p className="text-sm text-[#8b7cf6]">Made for college and school clubs</p>
           <h2 className="mx-auto mt-5 max-w-3xl text-3xl font-medium tracking-[-0.04em] text-[#e8e8eb] sm:text-5xl">The fastest way to finish the certificate backlog.</h2>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-[#8f8f98]">
@@ -95,7 +96,8 @@ export default async function MainStagePage() {
       </section>
 
       <section id="how-it-works" className="relative z-10 border-y border-white/[0.08] bg-[#0d0d0f] px-6 py-28">
-        <ScrollReveal className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
+        <MutedLinePattern />
+        <ScrollReveal className="relative mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
           <div>
             <p className="text-sm font-medium text-[#8b7cf6]">01 · Upload your design</p>
             <h2 className="mt-5 text-4xl font-medium tracking-[-0.05em] text-[#ededf0] sm:text-6xl">Start with the certificate your club already loves.</h2>
@@ -108,8 +110,8 @@ export default async function MainStagePage() {
         </ScrollReveal>
       </section>
 
-      <section className="relative z-10 mx-auto max-w-6xl px-6 py-32">
-        <ScrollReveal className="grid gap-16 lg:grid-cols-2">
+      <section className="relative z-10 overflow-hidden px-6 py-32">
+        <ScrollReveal className="relative mx-auto grid max-w-6xl gap-16 lg:grid-cols-2">
           <div>
             <p className="text-sm font-medium text-[#8b7cf6]">02 · Import the list</p>
             <h2 className="mt-5 text-4xl font-medium tracking-[-0.05em] text-[#ededf0] sm:text-6xl">One spreadsheet. Every participant.</h2>
@@ -122,7 +124,8 @@ export default async function MainStagePage() {
       </section>
 
       <section className="relative z-10 border-y border-white/[0.08] bg-[#0d0d0f] px-6 py-32 text-center">
-        <ScrollReveal>
+        <MutedLinePattern />
+        <ScrollReveal className="relative">
           <p className="text-sm font-medium text-[#8b7cf6]">03 · Send without the all-nighter</p>
           <h2 className="mx-auto mt-5 max-w-3xl text-4xl font-medium tracking-[-0.05em] text-[#ededf0] sm:text-6xl">Certificates delivered while the event is still fresh.</h2>
           <div className="mx-auto mt-14 grid w-full max-w-6xl gap-6 text-left md:grid-cols-2">
@@ -133,8 +136,8 @@ export default async function MainStagePage() {
         </ScrollReveal>
       </section>
 
-      <section id="team" className="relative z-10 border-b border-white/[0.08] px-6 py-28">
-        <ScrollReveal className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
+      <section id="team" className="relative z-10 overflow-hidden border-b border-white/[0.08] px-6 py-28">
+        <ScrollReveal className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
           <div>
             <p className="text-sm font-medium text-[#8b7cf6]">04 · Bring your team along</p>
             <h2 className="mt-5 max-w-xl text-4xl font-medium tracking-[-0.05em] text-[#ededf0] sm:text-6xl">
@@ -160,30 +163,42 @@ export default async function MainStagePage() {
       <Testimonials />
 
       <section id="faq" className="relative z-10 w-full border-y border-white/[0.08] px-6 py-28">
-        <ScrollReveal>
+        <ScrollReveal className="relative">
           <p className="text-center text-sm font-medium text-[#8b7cf6]">Questions, answered</p>
           <MotionAccordion
             className="mx-auto mt-10 max-w-3xl"
             items={[
               {
-                question: "Is Certly free?",
-                answer: "Yes. There is no card, trial, yearly fee, or per-certificate charge for clubs.",
+                question: "What is an organisation workspace?",
+                answer: "It gives your club one shared place for its events and team. If you belong to more than one organisation, you can switch between their workspaces.",
               },
               {
-                question: "What do I need to get started?",
-                answer: "Your certificate design and a spreadsheet containing each recipient's name and email address.",
+                question: "How do I invite my teammates?",
+                answer: "An organisation admin can invite a teammate by email from the Members settings, choosing whether they join as an Admin or Member.",
               },
               {
-                question: "Can I send from our club Gmail?",
-                answer: "Yes. Connect your organisation's Gmail and certificates are delivered from an address participants recognise.",
+                question: "What is the difference between Admin and Member?",
+                answer: "Admins can invite people, manage pending invitations, and change member roles. Members can work in the organisation but cannot manage its team access.",
+              },
+              {
+                question: "Does an invitation expire, and which email should I use?",
+                answer: "Invitations expire after 7 days and are tied to the invited email address. Sign in or create an account with that same address to accept.",
+              },
+              {
+                question: "Do teammates need to share one login?",
+                answer: "No. Everyone uses their own Certly account and joins the organisation through an invitation, so your team does not need to share credentials.",
+              },
+              {
+                question: "Can I still send certificates from our club Gmail?",
+                answer: "Yes. Connect the organisation's Gmail and send certificates from an address participants already recognise.",
               },
             ]}
           />
         </ScrollReveal>
       </section>
 
-      <footer className="relative z-10 w-full border-t border-white/[0.1] bg-[#0d0d0f]">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="relative z-10 w-full overflow-hidden border-t border-white/[0.1] bg-[#0d0d0f]">
+        <div className="relative mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <CertlyLogo className="h-7 w-7 rounded-md" />
             <span className="text-sm font-semibold text-[#ededf0]">Certly</span>
@@ -197,7 +212,7 @@ export default async function MainStagePage() {
             <Link href="/register" className="transition-colors hover:text-white">Get started</Link>
           </nav>
         </div>
-        <p className="border-t border-white/[0.06] px-6 py-4 text-center text-xs text-[#62626a]">© 2026 Certly. Free for college and school clubs.</p>
+        <p className="relative border-t border-white/[0.06] px-6 py-4 text-center text-xs text-[#62626a]">© 2026 Certly. Free for college and school clubs.</p>
       </footer>
     </main>
   );

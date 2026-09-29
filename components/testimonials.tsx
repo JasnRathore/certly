@@ -2,9 +2,22 @@
 /* eslint-disable shadcn/no-inline-styles, shadcn/no-arbitrary-values, shadcn/no-raw-colors */
 
 import * as React from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
+import { MutedLinePattern } from "@/components/muted-line-pattern";
 
-const testimonials = [
+type Testimonial = {
+  site: string;
+  siteMark: string;
+  quote: string;
+  name: string;
+  role: string;
+  initials: string;
+  color: string;
+  pfpUrl?: string;
+};
+
+const testimonials: Testimonial[] = [
   {
     site: "Google",
     siteMark: "google",
@@ -14,6 +27,7 @@ const testimonials = [
     role: "Events Lead · University Club",
     initials: "AM",
     color: "#8b7cf6",
+    pfpUrl: "https://api.dicebear.com/10.x/notionists/svg?seed=Ryan%20Christen"
   },
   {
     site: "X.com",
@@ -24,6 +38,7 @@ const testimonials = [
     role: "Operations Lead · Student Society",
     initials: "MS",
     color: "#ff7a9e",
+    pfpUrl: "https://i.pinimg.com/736x/d0/38/bd/d038bd46cae04f359697c9d657fb38db.jpg"
   },
   {
     site: "Google",
@@ -34,6 +49,7 @@ const testimonials = [
     role: "Secretary · College Club",
     initials: "RK",
     color: "#53c7bd",
+    pfpUrl: "https://api.dicebear.com/10.x/gaze/svg?backgroundColor=16161a&seed=1vqlm7co"
   },
   {
     site: "X.com",
@@ -44,6 +60,7 @@ const testimonials = [
     role: "Community Manager · Student Network",
     initials: "ZK",
     color: "#f2b84b",
+    pfpUrl: "https://api.dicebear.com/10.x/adventurer/svg?seed=synftg2k"
   },
 ];
 
@@ -79,7 +96,8 @@ export function Testimonials() {
 
   return (
     <section className="relative z-10 border-y border-white/[0.08] bg-[#0d0d0f] px-6 py-24 sm:py-28">
-      <div className="mx-auto max-w-6xl">
+      <MutedLinePattern />
+      <div className="relative mx-auto max-w-6xl">
         <div className="flex items-end justify-between gap-6">
           <div>
             <p className="text-sm font-medium text-[#a9a2ff]">Testimonials</p>
@@ -154,11 +172,29 @@ export function Testimonials() {
                     </p>
                   </div>
                   <div className="mt-12 flex items-center gap-3">
-                    <span
-                      className="grid size-10 place-items-center rounded-full text-xs font-semibold text-black"
-                      style={{ background: testimonial.color }}
-                    >
-                      {testimonial.initials}
+                    <span className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full text-xs font-semibold text-black">
+                      {testimonial.pfpUrl ? (
+                        <span
+                          className="grid size-full place-items-center"
+                          style={{ background: testimonial.color }}
+                        >
+                        <Image
+                          src={testimonial.pfpUrl}
+                          alt={`${testimonial.name} profile picture`}
+                          fill
+                          unoptimized
+                          sizes="40px"
+                          className="object-cover"
+                        />
+                        </span>
+                      ) : (
+                        <span
+                          className="grid size-full place-items-center"
+                          style={{ background: testimonial.color }}
+                        >
+                          {testimonial.initials}
+                        </span>
+                      )}
                     </span>
                     <div>
                       <p className="text-sm font-semibold text-[#ededf0]">{testimonial.name}</p>
