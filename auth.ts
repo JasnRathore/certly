@@ -3,6 +3,10 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import {
+  createRandomOrganizationAvatarConfig,
+  ensureOrganizationAvatars,
+} from '@/lib/organization-avatar';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -20,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials?.email || !credentials?.password) return null;
         
         const res = await db.execute({
-          sql: 'SELECT * FROM User WHERE email = ?',
+          sql: 'SELECT * FROM User WHERE lower(email) = lower(?)',
           args: [credentials.email as string]
         });
         
@@ -53,10 +57,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const membershipId = uuidv4();
           
           const orgName = (user.name || 'User') + "'s Org";
+          await ensureOrganizationAvatars();
+          const avatarConfig = JSON.stringify(createRandomOrganizationAvatarConfig());
           
           await db.batch([
             { sql: "INSERT INTO User (id, name, email, passwordHash) VALUES (?, ?, ?, '')", args: [userId, user.name || 'User', user.email] },
             { sql: "INSERT INTO Organization (id, name) VALUES (?, ?)", args: [orgId, orgName] },
+            { sql: "INSERT INTO OrganizationAvatar (orgId, config) VALUES (?, ?)", args: [orgId, avatarConfig] },
             { sql: "INSERT INTO OrgMembership (id, userId, orgId, role) VALUES (?, ?, ?, 'ADMIN')", args: [membershipId, userId, orgId] }
           ]);
           user.id = userId;

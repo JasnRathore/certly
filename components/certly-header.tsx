@@ -7,6 +7,7 @@ import {
   DockIcon,
   DockLink,
 } from "@/components/dock";
+import { CertlyLogo } from "@/components/certly-logo";
 
 function HomeIcon() {
   return (
@@ -43,18 +44,22 @@ export function CertlyHeader({ signedIn }: { signedIn: boolean }) {
         <DockLink label="How it works" href="#how-it-works" />
         <DockLink label="Features" href="#features" />
         <DockLink label="FAQ" href="#faq" />
+
+        {!signedIn ? 
         <DockLink
-          label={signedIn ? "Dashboard" : "Log in"}
-          href={signedIn ? "/dashboard" : "/login"}
-        />
+          className="underline"
+          label="Log In"
+          href="/login"
+        /> : "" }
         <DockLink
-          label={signedIn ? "Account" : "Get started"}
-          href={signedIn ? "/settings" : "/register"}
+          className="bg-[#ff5c70] text-white hover:bg-white hover:text-black"
+          label={!signedIn ? "Get started" : "Dashboard"}
+          href={!signedIn ? "/register" : "/dashboard"}
         />
       </Dock>
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 md:hidden">
         <Link href="/" className="flex items-center gap-2 text-sm font-medium">
-          <span className="grid h-5 w-5 place-items-center rounded bg-[#D9A404] text-[10px] font-bold text-[#1A1400]">C</span>
+          <CertlyLogo className="h-5 w-5 rounded" />
           Certly
         </Link>
         <Link href={signedIn ? "/dashboard" : "/register"} className="text-xs text-[#EDEDEF]">

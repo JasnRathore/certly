@@ -8,13 +8,10 @@ import { LooksSwitcher } from "./looks-switcher";
 import { MagneticLink } from "./magnetic-link";
 import { MakerCertificate, MakerStudio } from "./maker-studio";
 import { TiltCard } from "./tilt-card";
+import { CertlyLogo } from "@/components/certly-logo";
 
 function Mark({ className = "h-6 w-6 text-[#1a1a1a]" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 76 65" fill="currentColor" aria-hidden="true">
-      <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
-    </svg>
-  );
+  return <CertlyLogo className={className} />;
 }
 
 const pillars = [

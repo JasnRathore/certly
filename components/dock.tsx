@@ -352,7 +352,7 @@ export const DockItem = ({
             ? isDark
               ? "#262626"
               : "#F0F0F0"
-            : "transparent",
+            : "rgba(0, 0, 0, 0)",
       }}
       whileHover={{
         backgroundColor:
@@ -504,7 +504,7 @@ export const DockIcon = ({
           "group flex items-center justify-center w-[56px] h-[42px] rounded-full cursor-pointer",
           className
         )}
-        animate={{ backgroundColor: "transparent" }}
+        animate={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
         whileHover={{
           backgroundColor: isDark ? "#262626" : "#F0F0F0",
         }}
@@ -603,7 +603,7 @@ export const DockLink = ({
           ? isDark
             ? "#262626"
             : "#F0F0F0"
-          : "transparent",
+          : "rgba(0, 0, 0, 0)",
       }}
       whileHover={{
         backgroundColor: isDark ? "#262626" : "#F0F0F0",

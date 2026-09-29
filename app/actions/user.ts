@@ -2,15 +2,34 @@
 
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
+import { isUserAvatarConfig, type UserAvatarConfig } from '@/lib/user-avatar';
+import { ensureUserAvatarTable } from '@/lib/user-avatar-storage';
 
-export async function updateUser(data: { name: string }) {
+export async function updateUser(data: { name: string; avatarConfig: UserAvatarConfig }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Unauthorized');
+  if (typeof data?.name !== 'string') throw new Error('A display name is required.');
+  const name = data.name.trim();
+  if (!name || name.length > 80) throw new Error('Name must be between 1 and 80 characters.');
+  if (!isUserAvatarConfig(data.avatarConfig)) throw new Error('Invalid avatar configuration.');
 
-  await db.execute({
-    sql: 'UPDATE users SET name = ? WHERE id = ?',
-    args: [data.name, session.user.id],
-  });
+  await ensureUserAvatarTable();
+  await db.batch([
+    {
+      sql: 'UPDATE User SET name = ? WHERE id = ?',
+      args: [name, session.user.id],
+    },
+    {
+      sql: `
+        INSERT INTO UserAvatar (userId, config)
+        VALUES (?, ?)
+        ON CONFLICT(userId) DO UPDATE SET
+          config = excluded.config,
+          updatedAt = CURRENT_TIMESTAMP
+      `,
+      args: [session.user.id, JSON.stringify(data.avatarConfig)],
+    },
+  ]);
 }
 
 export async function deleteUserAccount() {
@@ -18,6 +37,12 @@ export async function deleteUserAccount() {
   if (!session?.user?.id) throw new Error('Unauthorized');
 
   const userId = session.user.id;
+
+  await ensureUserAvatarTable();
+  await db.execute({
+    sql: 'DELETE FROM UserAvatar WHERE userId = ?',
+    args: [userId],
+  });
 
   // Delete all memberships for this user
   await db.execute({

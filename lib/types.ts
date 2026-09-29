@@ -9,6 +9,7 @@ export interface TextConfig {
 export interface CertEvent {
   id: string;
   name: string;
+  avatar: string;
   description: string;
   createdAt: string;
   status: 'draft' | 'configured' | 'generated' | 'sent';

@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Mail } from "lucide-react";
 
 export function InviteBanner({ count }: { count: number }) {
   const pathname = usePathname();
-  if (count <= 0 || pathname.startsWith("/invites")) return null;
+  const searchParams = useSearchParams();
+  if (
+    count <= 0 ||
+    pathname.startsWith("/invites") ||
+    (pathname === "/dashboard" && searchParams.get("section") === "invitations")
+  ) return null;
 
   return (
     <div className="mb-4 flex flex-col gap-3 rounded-lg border border-[#262626] bg-[#0a0a0a] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -17,7 +22,7 @@ export function InviteBanner({ count }: { count: number }) {
         </span>
       </div>
       <Link
-        href="/invites"
+        href="/dashboard?section=invitations"
         className="inline-flex h-8 items-center justify-center rounded-md bg-white px-3 text-[13px] font-medium text-black hover:bg-[#eaeaea]"
       >
         Review

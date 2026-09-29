@@ -24,59 +24,65 @@ export function WorkspacePreview() {
 
   return (
     <div className="mx-auto mt-16 w-full max-w-[1120px] text-left">
-      <div className="relative [perspective:1600px]">
-        <div
-          key={activePreview.imageSrc}
-          className="workspace-preview-flip shadow-[0_35px_120px_rgba(0,0,0,0.7)]"
-          aria-live="polite"
-        >
-          <Safari url={activePreview.url} imageSrc={activePreview.imageSrc} />
-        </div>
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-4 px-1">
-        <p className="text-xs text-[#8f8f98]">
-          <span className="text-[#ededf0]">{activePreview.label}</span>
-          {" · "}Certly workspace
-        </p>
-        <div className="flex items-center gap-2">
-          {previews.map((preview, index) => (
+      <div className="workspace-carousel relative aspect-[1203/728] [perspective:1600px]" aria-live="polite">
+        {previews.map((preview, index) => {
+          const offset = (index - activeIndex + previews.length) % previews.length;
+          const position = offset === 0 ? "center" : offset === 1 ? "right" : "left";
+
+          return (
             <button
               type="button"
-              key={preview.label}
+              key={preview.imageSrc}
               aria-label={`Show ${preview.label}`}
               aria-pressed={index === activeIndex}
               onClick={() => setActiveIndex(index)}
-              className={`h-1.5 rounded-full transition-all ${
-                index === activeIndex ? "w-8 bg-[#D9A404]" : "w-1.5 bg-white/30 hover:bg-white/60"
+              className={`workspace-carousel-card workspace-carousel-${position} ${
+                position === "center" ? "cursor-default" : "cursor-pointer"
               }`}
-            />
-          ))}
-        </div>
+            >
+              <Safari url={preview.url} imageSrc={preview.imageSrc} />
+            </button>
+          );
+        })}
       </div>
       <style jsx>{`
-        .workspace-preview-flip {
-          animation: workspace-flip 700ms cubic-bezier(0.22, 0.8, 0.24, 1) both;
+        .workspace-carousel-card {
+          position: absolute;
+          left: 50%;
+          top: 0;
+          width: 100%;
           transform-origin: center center;
-          backface-visibility: hidden;
+          transition:
+            transform 800ms cubic-bezier(0.22, 0.8, 0.24, 1),
+            opacity 800ms ease,
+            filter 800ms ease;
         }
 
-        @keyframes workspace-flip {
-          0% {
-            opacity: 0;
-            transform: rotateY(-75deg) scale(0.94);
-          }
-          60% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 1;
-            transform: rotateY(0) scale(1);
-          }
+        .workspace-carousel-center {
+          z-index: 3;
+          opacity: 1;
+          transform: translateX(-50%) translateZ(40px) scale(1);
+          filter: none;
+        }
+
+        .workspace-carousel-left,
+        .workspace-carousel-right {
+          z-index: 1;
+          opacity: 0.62;
+          filter: saturate(0.75) brightness(0.72);
+        }
+
+        .workspace-carousel-left {
+          transform: translateX(-89%) translateZ(-80px) rotateY(7deg) scale(0.76);
+        }
+
+        .workspace-carousel-right {
+          transform: translateX(-11%) translateZ(-80px) rotateY(-7deg) scale(0.76);
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .workspace-preview-flip {
-            animation: none;
+          .workspace-carousel-card {
+            transition: none;
           }
         }
       `}</style>

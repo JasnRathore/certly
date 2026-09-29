@@ -6,14 +6,13 @@ import { InviteActions, SwitchAccountButton } from "@/components/InviteActions";
 import { roleLabel } from "@/lib/format";
 import { getInviteByToken, getUserById, isOrgMember } from "@/lib/org-members";
 import { safeNextPath } from "@/lib/safe-path";
+import { CertlyLogo } from "@/components/certly-logo";
 
 function Logo() {
   return (
     <div className="mb-8 text-center">
       <div className="mb-4 inline-flex items-center justify-center">
-        <svg className="h-9 w-9 text-white" viewBox="0 0 76 65" fill="currentColor" aria-hidden="true">
-          <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
-        </svg>
+        <CertlyLogo className="h-9 w-9 rounded-md" priority />
       </div>
       <h1 className="text-2xl font-bold tracking-tight text-white">Certly</h1>
     </div>

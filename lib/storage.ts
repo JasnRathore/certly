@@ -3,13 +3,25 @@ import { CertEvent, Recipient, DEFAULT_TEXT_CONFIG, DEFAULT_EMAIL_SUBJECT, DEFAU
 import path from 'path';
 import fs from 'fs/promises';
 import { v4 as uuidv4 } from "uuid";
+import {
+  createRandomEventAvatarConfig,
+  ensureEventAvatars,
+  parseEventAvatarDataUri,
+} from "@/lib/event-avatar";
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ORGS_DIR = path.join(DATA_DIR, 'orgs');
 
 export async function getAllEvents(orgId: string): Promise<CertEvent[]> {
+  await ensureEventAvatars();
   const eventsRes = await db.execute({
-    sql: 'SELECT * FROM Event WHERE orgId = ? ORDER BY createdAt DESC',
+    sql: `
+      SELECT e.*, a.config AS avatarConfig
+      FROM Event e
+      JOIN EventAvatar a ON a.eventId = e.id
+      WHERE e.orgId = ?
+      ORDER BY e.createdAt DESC
+    `,
     args: [orgId]
   });
 
@@ -20,6 +32,7 @@ export async function getAllEvents(orgId: string): Promise<CertEvent[]> {
     allEvents.push({
       id: row.id as string,
       name: row.name as string,
+      avatar: parseEventAvatarDataUri(row.avatarConfig),
       description: row.description as string,
       status: row.status as CertEvent['status'],
       emailSubject: row.emailSubject as string,
@@ -43,7 +56,16 @@ export async function getAllEvents(orgId: string): Promise<CertEvent[]> {
 }
 
 export async function getEvent(id: string, orgId: string): Promise<CertEvent | null> {
-  const eRes = await db.execute({ sql: 'SELECT * FROM Event WHERE id = ? AND orgId = ?', args: [id, orgId] });
+  await ensureEventAvatars();
+  const eRes = await db.execute({
+    sql: `
+      SELECT e.*, a.config AS avatarConfig
+      FROM Event e
+      JOIN EventAvatar a ON a.eventId = e.id
+      WHERE e.id = ? AND e.orgId = ?
+    `,
+    args: [id, orgId],
+  });
   if (eRes.rows.length === 0) return null;
   
   const row = eRes.rows[0];
@@ -52,6 +74,7 @@ export async function getEvent(id: string, orgId: string): Promise<CertEvent | n
   return {
     id: row.id as string,
     name: row.name as string,
+    avatar: parseEventAvatarDataUri(row.avatarConfig),
     description: row.description as string,
     status: row.status as CertEvent['status'],
     emailSubject: row.emailSubject as string,
@@ -74,12 +97,20 @@ export async function getEvent(id: string, orgId: string): Promise<CertEvent | n
 export async function createEvent(name: string, description: string, orgId: string): Promise<CertEvent> {
   const id = uuidv4();
   const textConfig = JSON.stringify(DEFAULT_TEXT_CONFIG);
+  await ensureEventAvatars();
+  const avatarConfig = JSON.stringify(createRandomEventAvatarConfig());
   
-  await db.execute({
-    sql: `INSERT INTO Event (id, name, description, orgId, textConfig, emailSubject, emailBody, status, hasTemplate) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, 'draft', 0)`,
-    args: [id, name, description, orgId, textConfig, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_BODY]
-  });
+  await db.batch([
+    {
+      sql: `INSERT INTO Event (id, name, description, orgId, textConfig, emailSubject, emailBody, status, hasTemplate)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'draft', 0)`,
+      args: [id, name, description, orgId, textConfig, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_BODY],
+    },
+    {
+      sql: "INSERT INTO EventAvatar (eventId, config) VALUES (?, ?)",
+      args: [id, avatarConfig],
+    },
+  ]);
 
   const actualDir = path.join(ORGS_DIR, orgId, 'events', id);
   await fs.mkdir(actualDir, { recursive: true });

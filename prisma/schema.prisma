@@ -15,7 +15,14 @@ model Organization {
   memberships      OrgMembership[]
   invites          OrgInvite[]
   events           Event[]
+  avatar           OrganizationAvatar?
   createdAt        DateTime        @default(now())
+}
+
+model OrganizationAvatar {
+  orgId        String       @id
+  config       String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -25,7 +32,23 @@ model User {
   passwordHash String
   memberships  OrgMembership[]
   invitesSent  OrgInvite[]     @relation("InvitesSent")
+  avatar       UserAvatar?
+  passwordResetTokens PasswordResetToken[]
   createdAt    DateTime        @default(now())
+}
+
+model UserAvatar {
+  userId    String   @id
+  config    String
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  tokenHash String @id
+  userId    String
+  expiresAt BigInt
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model OrgMembership {
@@ -71,8 +94,15 @@ model Event {
   templateHeight Float?
   orgId          String
   organization   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  avatar         EventAvatar?
   recipients     Recipient[]
   createdAt      DateTime     @default(now())
+}
+
+model EventAvatar {
+  eventId String @id
+  config  String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Recipient {

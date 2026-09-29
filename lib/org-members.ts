@@ -1,4 +1,9 @@
 import { db } from "@/lib/db";
+import { createUserAvatarDataUri } from "@/lib/user-avatar";
+import {
+  ensureUserAvatarTable,
+  parseUserAvatarConfig,
+} from "@/lib/user-avatar-storage";
 
 export type OrgRole = "ADMIN" | "MEMBER";
 
@@ -7,6 +12,7 @@ export type OrgMemberRecord = {
   userId: string;
   name: string;
   email: string;
+  avatar: string;
   role: OrgRole;
   createdAt: string;
 };
@@ -53,11 +59,14 @@ function nowIso() {
 }
 
 export async function listOrgMembers(orgId: string): Promise<OrgMemberRecord[]> {
+  await ensureUserAvatarTable();
   const res = await db.execute({
     sql: `
-      SELECT m.id AS membershipId, m.role, m.createdAt, m.userId, u.name, u.email
+      SELECT m.id AS membershipId, m.role, m.createdAt, m.userId, u.name, u.email,
+        a.config AS avatarConfig
       FROM OrgMembership m
       JOIN User u ON u.id = m.userId
+      LEFT JOIN UserAvatar a ON a.userId = u.id
       WHERE m.orgId = ?
       ORDER BY CASE m.role WHEN 'ADMIN' THEN 0 ELSE 1 END, u.name COLLATE NOCASE
     `,
@@ -69,6 +78,9 @@ export async function listOrgMembers(orgId: string): Promise<OrgMemberRecord[]> 
     userId: row.userId as string,
     name: row.name as string,
     email: row.email as string,
+    avatar: createUserAvatarDataUri(
+      parseUserAvatarConfig(row.avatarConfig, row.userId as string),
+    ),
     role: asRole(row.role),
     createdAt: String(row.createdAt),
   }));
