@@ -1,6 +1,6 @@
 'use client';
-import { useState, Suspense } from 'react';
-import { verifyOtp } from '@/app/actions/auth';
+import { useState, useTransition, Suspense } from 'react';
+import { resendVerificationOtp, verifyOtp } from '@/app/actions/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CertlyLogo } from '@/components/certly-logo';
@@ -9,7 +9,10 @@ import { MatrixBackground } from '@/components/matrix';
 function VerifyForm() {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [resendMessage, setResendMessage] = useState('');
+  const [resendFailed, setResendFailed] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, startResend] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
@@ -32,6 +35,27 @@ function VerifyForm() {
     } finally {
       setIsVerifying(false);
     }
+  };
+
+  const handleResend = () => {
+    setError('');
+    setResendMessage('');
+    setResendFailed(false);
+    startResend(async () => {
+      try {
+        const result = await resendVerificationOtp(email);
+        if (result.error) {
+          setResendMessage(result.error);
+          setResendFailed(true);
+          return;
+        }
+        setResendMessage(result.success ?? '');
+        setCode('');
+      } catch {
+        setResendMessage('We could not resend your code. Please try again.');
+        setResendFailed(true);
+      }
+    });
   };
 
   return (
@@ -78,6 +102,20 @@ function VerifyForm() {
             {isVerifying ? 'Verifying...' : 'Verify email'}
           </button>
         </form>
+
+        <div className="mt-5 text-center">
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={isResending || !email}
+            className="cursor-pointer text-sm font-medium text-[#a9a2ff] underline-offset-4 transition-colors hover:text-white hover:underline disabled:cursor-wait disabled:opacity-60"
+          >
+            {isResending ? 'Sending a new code...' : "Didn't receive the code? Resend"}
+          </button>
+          <p aria-live="polite" className={`mt-2 min-h-5 text-sm ${resendFailed ? 'text-red-400' : 'text-[#8f8f98]'}`}>
+            {resendMessage}
+          </p>
+        </div>
 
         <p className="mt-7 text-center text-sm text-[#8f8f98]">
           <Link

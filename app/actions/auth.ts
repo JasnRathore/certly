@@ -79,7 +79,14 @@ export async function register(
   }
   
   try {
-    await sendAppEmail(email, "Your Verification Code", `Your code is: ${code}`);
+    await sendAppEmail(email, "Your Certly verification code", `Your code is: ${code}\n\nThis code expires in 10 minutes. Never share it with anyone. If you didn't request this code, you can ignore this email.`, {
+      heading: "Verify your Certly account",
+      preheader: "Use this one-time code to finish creating your Certly account.",
+      intro: "Enter this one-time verification code in Certly to finish creating your account.",
+      code,
+      details: "This code expires in 10 minutes.",
+      note: "Never share this code with anyone. If you didn't request it, you can safely ignore this email.",
+    });
   } catch {
     try {
       await db.batch([
@@ -116,6 +123,52 @@ export async function verifyOtp(email: string, code: string) {
   
   await db.execute({ sql: "DELETE FROM OTP WHERE email = ?", args: [email] });
   return { success: true };
+}
+
+export async function resendVerificationOtp(emailInput: string) {
+  const email = emailInput.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { error: "Enter a valid email address to resend the code." };
+  }
+
+  const otpResult = await db.execute({
+    sql: "SELECT id, email FROM OTP WHERE lower(email) = lower(?) ORDER BY expiresAt DESC LIMIT 1",
+    args: [email],
+  });
+  const otp = otpResult.rows[0];
+  if (!otp) {
+    return { error: "No pending verification was found. Please sign in or create your account again." };
+  }
+
+  const code = randomInt(100000, 1000000).toString();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  const updateResult = await db.execute({
+    sql: "UPDATE OTP SET code = ?, expiresAt = ? WHERE id = ?",
+    args: [code, expiresAt, otp.id as string],
+  });
+  if (Number(updateResult.rowsAffected) === 0) {
+    return { error: "This verification request is no longer active. Please sign in or create your account again." };
+  }
+
+  try {
+    await sendAppEmail(
+      String(otp.email),
+      "Your Certly verification code",
+      `Your code is: ${code}\n\nThis code expires in 10 minutes. Never share it with anyone. If you didn't request this code, you can ignore this email.`,
+      {
+        heading: "Verify your Certly account",
+        preheader: "Use this one-time code to finish creating your Certly account.",
+        intro: "Enter this one-time verification code in Certly to finish creating your account.",
+        code,
+        details: "This code expires in 10 minutes.",
+        note: "Never share this code with anyone. If you didn't request it, you can safely ignore this email.",
+      },
+    );
+  } catch {
+    return { error: "We couldn't send a new code right now. Please try again shortly." };
+  }
+
+  return { success: "A new verification code has been sent to your email." };
 }
 
 export type LoginActionState = { error?: string };
@@ -219,6 +272,14 @@ export async function requestPasswordReset(
       user.email as string,
       "Reset your Certly password",
       `Use this link to reset your Certly password. It expires in 30 minutes and can only be used once:\n\n${resetUrl.toString()}\n\nIf you didn't request this, you can ignore this email.`,
+      {
+        heading: "Reset your password",
+        preheader: "Use the secure link to choose a new Certly password.",
+        intro: "We received a request to reset the password for your Certly account.",
+        action: { label: "Reset password", url: resetUrl.toString() },
+        details: "This link expires in 30 minutes and can only be used once.",
+        note: "If you didn't request a password reset, you can ignore this email. Your password will not change.",
+      },
     );
   } catch {
     return { error: "We couldn't send the reset email right now. Please try again later." };

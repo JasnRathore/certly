@@ -95,7 +95,14 @@ async function deliverInvite(input: {
     "If you were not expecting this, you can ignore the email.",
   ].join("\n");
 
-  await sendAppEmail(input.email, subject, text);
+  await sendAppEmail(input.email, subject, text, {
+    heading: `You're invited to ${input.orgName}`,
+    preheader: `${input.inviterName} invited you to join ${input.orgName} on Certly.`,
+    intro: `${input.inviterName} invited you to join ${input.orgName} on Certly as ${roleLabel(input.role)}.`,
+    action: { label: "Accept invitation", url },
+    details: `This invitation expires on ${expires}.`,
+    note: "If you weren't expecting this invitation, you can ignore this email.",
+  });
   return url;
 }
 
